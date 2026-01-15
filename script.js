@@ -1,24 +1,41 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const fadeElements = document.querySelectorAll(".fade-in");
 
-    if (!fadeElements.length) {
-        console.warn("No fade-in elements found");
-        return;
-    }
+    /* =========================
+       FADE-IN (SAFE)
+    ========================= */
+    const fadeEls = document.querySelectorAll(".fade-in");
 
     const observer = new IntersectionObserver(
-        (entries, obs) => {
+        entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add("visible");
-                    obs.unobserve(entry.target);
+                    observer.unobserve(entry.target);
                 }
             });
         },
-        {
-            threshold: 0.15
-        }
+        { threshold: 0.15 }
     );
 
-    fadeElements.forEach(el => observer.observe(el));
+    fadeEls.forEach(el => observer.observe(el));
+
+    /* =========================
+       ABOUT SLIDESHOW (FIXED)
+    ========================= */
+    const slides = document.querySelectorAll(".about-slideshow .slide");
+
+    if (!slides.length) return;
+
+    let current = 0;
+
+    // ensure exactly one active slide
+    slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === 0);
+    });
+
+    setInterval(() => {
+        slides[current].classList.remove("active");
+        current = (current + 1) % slides.length;
+        slides[current].classList.add("active");
+    }, 4000);
 });
